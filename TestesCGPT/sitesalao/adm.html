@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - D&M Estúdio</title>
+    <style>
+        /* Mantendo o padrão minimalista escuro que você usa no projeto */
+        body { font-family: sans-serif; background-color: #0d0d0d; color: #fff; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1, h2 { font-weight: 300; text-transform: uppercase; letter-spacing: 2px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+        .tab-btn { background: #141414; color: #888; border: 1px solid #222; padding: 10px 20px; cursor: pointer; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .tab-btn.active { background: #fff; color: #000; border-color: #fff; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; background: #141414; color: #fff; border: 1px solid #222; }
+        button { background: #fff; color: #000; border: none; padding: 10px; width: 100%; cursor: pointer; text-transform: uppercase; font-weight: bold; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 10px 0; border-bottom: 1px solid #141414; display: flex; justify-content: space-between; align-items: center; }
+        .del-btn { background: transparent; color: #ff4d4d; border: none; cursor: pointer; width: auto; padding: 0; }
+        .wa-btn { color: #25d366; text-decoration: none; font-size: 13px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="container">
+    <h1>Painel de Controle</h1>
+    
+    <!-- Abas para alternar entre as agendas de forma limpa -->
+    <div class="tabs">
+        <button class="tab-btn active" id="btn-Daiza" onclick="mudarAgenda('Daiza')">Agenda da Daiza</button>
+        <button class="tab-btn" id="btn-Marina" onclick="mudarAgenda('Marina')">Agenda da Marina</button>
+    </div>
+
+    <div class="grid">
+        <div>
+            <h2>Serviços e Preços</h2>
+            <input type="text" id="nomeServico" placeholder="Nome do Serviço">
+            <input type="number" id="precoServico" placeholder="Valor">
+            <button onclick="cadastrarServico()">Cadastrar</button>
+            <ul id="listaServicos"></ul>
+        </div>
+
+        <div>
+            <h2>Abrir Horários</h2>
+            <input type="date" id="dataAgenda">
+            <input type="time" id="horaAgenda">
+            <button onclick="liberarHorario()">Liberar Horário</button>
+            <ul id="listaHorarios"></ul>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h2>Clientes Agendadas</h2>
+        <ul id="listaAgendamentos"></ul>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://uglhbnbyloyeivpsrwvg.supabase.co"; 
+    const SUPABASE_KEY = "sb_publishable_jLcnt4fC899DcVrrB2SGZw_kWu3Br-A"; 
+    
+    // Mudamos o nome aqui para 'supabaseClient' para acabar com o conflito de declaração
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let profissionalAtual = "Daiza";
+
+    function mudarAgenda(nome) {
+        profissionalAtual = nome;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-${nome}`).classList.add('active');
+        atualizarPainel();
+    }
+
+    async function atualizarPainel() {
+        await Promise.all([listarServicos(), listarHorarios(), listarAgendamentos()]);
+    }
+
+    async function cadastrarServico() {
+        const nome = document.getElementById('nomeServico').value;
+        const preco = parseFloat(document.getElementById('precoServico').value);
+        if (!nome || !preco) return;
+
+        await supabaseClient.from('servicos').insert([{ nome, preco, profissional: profissionalAtual }]);
+        document.getElementById('nomeServico').value = '';
+        document.getElementById('precoServico').value = '';
+        atualizarPainel();
+    }
+
+    async function listarServicos() {
+        const { data } = await supabaseClient.from('servicos').select('*').eq('profissional', profissionalAtual);
+        const lista = document.getElementById('listaServicos');
+        lista.innerHTML = '';
+        if (data) {
+            data.forEach(s => {
+                lista.innerHTML += `<li>${s.nome} - R$ ${s.preco.toFixed(2)} <button class="del-btn" onclick="deletarItem('servicos', '${s.id}')">[X]</button></li>`;
+            });
+        }
+    }
+
+    async function liberarHorario() {
+        const data = document.getElementById('dataAgenda').value;
+        const hora = document.getElementById('horaAgenda').value;
+        if (!data || !hora) return;
+
+        await supabaseClient.from('horarios_livres').insert([{ data, hora, profissional: profissionalAtual, disponivel: true }]);
+        atualizarPainel();
+    }
+
+    async function listarHorarios() {
+        const { data } = await supabaseClient.from('horarios_livres').select('*').eq('profissional', profissionalAtual).eq('disponivel', true);
+        const lista = document.getElementById('listaHorarios');
+        lista.innerHTML = '';
+        if (data) {
+            data.forEach(h => {
+                const dataFormatada = h.data.split('-').reverse().join('/');
+                lista.innerHTML += `<li>${dataFormatada} às ${h.hora.substring(0,5)} <button class="del-btn" onclick="deletarItem('horarios_livres', '${h.id}')">[X]</button></li>`;
+            });
+        }
+    }
+
+    async function listarAgendamentos() {
+        const { data } = await supabaseClient.from('agendamentos').select('*').eq('profissional', profissionalAtual);
+        const lista = document.getElementById('listaAgendamentos');
+        lista.innerHTML = '';
+        if (data) {
+            data.forEach(a => {
+                const dataFormatada = a.data.split('-').reverse().join('/');
+                const linkWhats = `https://wa.me/55${a.telefone.replace(/\D/g, "")}?text=Olá%20${encodeURIComponent(a.cliente)}`;
+                lista.innerHTML += `<li>
+                    <div><strong>${a.cliente}</strong> (${dataFormatada} às ${a.hora.substring(0,5)})<br><small>${a.servico}</small></div>
+                    <a href="${linkWhats}" target="_blank" class="wa-btn">WhatsApp</a>
+                </li>`;
+            });
+        }
+    }
+
+    async function deletarItem(tabela, id) {
+        await supabaseClient.from(tabela).delete().eq('id', id);
+        atualizarPainel();
+    }
+
+    atualizarPainel();
+</script>
