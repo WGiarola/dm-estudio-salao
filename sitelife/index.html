@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Wallace ❤️ Marco</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background: rgb(31, 26, 26);
+    color: #fff;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+/* TELA SENHA */
+#telaSenha {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(120deg, #ff9a9e, #fad0c4);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+input {
+    padding: 12px;
+    border-radius: 20px;
+    border: none;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.container {
+    padding: 40px 20px;
+}
+
+.carta {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 700px;
+    margin: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.fotos img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin: 10px;
+    border: 3px solid white;
+}
+
+button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    background: white;
+    color: #ff4b6e;
+}
+
+/* CORAÇÕES */
+.coracao {
+    position: fixed;
+    top: -10px;
+    font-size: 20px;
+    animation: cair linear forwards;
+}
+
+@keyframes cair {
+    to {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+}
+
+video {
+    width: 90%;
+    max-width: 500px;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.imgMensagem {
+    width: 250px;
+    border-radius: 20px;
+    margin-top: 15px;
+    border: 3px solid white;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- AUDIO -->
+<audio id="musica" loop>
+    <!-- TROQUE musica.mp3 -->
+    <source src="Record (online-voice-recorder.com).mp3" type="audio/mpeg">
+</audio>
+
+<!-- TELA SENHA -->
+<div id="telaSenha">
+    <h2>Digite a senha 💕</h2>
+    <input type="password" id="senhaInput" placeholder="Senha">
+    <button onclick="verificarSenha()">Entrar</button>
+    <p id="erroSenha"></p>
+</div>
+
+<!-- SITE -->
+<div class="container" id="site" style="display:none;">
+<div class="carta">
+
+<h1>Para nós 💌</h1>
+
+<p>
+Desde o dia em que começamos nossa história,<br>
+meu mundo ficou mais bonito.<br><br>
+
+Wallace ❤️ Marco<br><br>
+
+Você é meu sorriso fácil,<br>
+meu abraço favorito,<br>
+meu lugar seguro.<br><br>
+
+E todos os dias eu agradeço<br>
+por ter você na minha vida.
+</p>
+
+<div class="tempo" id="tempoJuntos"></div>
+
+<div class="fotos">
+<img src="WhatsApp Image 2026-02-13 at 13.19.10.jpeg">
+<img src="b2bff399-0ecd-4987-aa3e-88072b9e3976.jpg">
+<img src="IMG_0200.jpeg">
+<img src="IMG_0226.jpeg">
+<img src="IMG_0294.jpeg">
+<img src="IMG_0226.jpeg">
+<img src="WhatsApp Image 2026-02-13 at 13.18.29.jpeg">
+</div>
+
+<br>
+<button onclick="mostrarMensagem()">❤️ Mensagem</button>
+<br>
+<button onclick="mostrarVideo()">🔥 Surpresa</button>
+
+<div id="mensagemExtra" style="display:none;">
+<p style="font-size:1.3em;">
+Eu escolheria você em todas as vidas, my Wolf 🐺💖
+</p>
+
+<!-- TROQUE imagemMensagem.jpg -->
+<img src="ChatGPT Image 12 de fev. de 2026, 12_39_32.png" class="imgMensagem">
+</div>
+
+<div id="videoContainer" style="display:none;">
+<video controls>
+<source src="IMG_0492.MOV" type="video/mp4">
+</video>
+</div>
+
+<div class="assinatura">
+Com amor,<br>
+Seu amor
+Auuuauauuuu 💕
+</div>
+
+</div>
+</div>
+
+<script>
+
+// ===== SENHA + MUSICA =====
+const senhaCorreta = "2306";
+
+function verificarSenha() {
+    const senha = document.getElementById("senhaInput").value;
+
+    if (senha === senhaCorreta) {
+        document.getElementById("telaSenha").style.display = "none";
+        document.getElementById("site").style.display = "block";
+
+        // TOCA MUSICA
+        document.getElementById("musica").play();
+    } else {
+        document.getElementById("erroSenha").innerText = "Senha errada 😢";
+    }
+}
+
+// ===== CONTADOR =====
+function calcularTempo() {
+    const inicio = new Date(2025, 8, 28, 0, 0, 0);
+    const agora = new Date();
+
+    let anos = agora.getFullYear() - inicio.getFullYear();
+    let meses = agora.getMonth() - inicio.getMonth();
+    let dias = agora.getDate() - inicio.getDate();
+
+    let horas = agora.getHours();
+    let minutos = agora.getMinutes();
+    let segundos = agora.getSeconds();
+
+    if (dias < 0) {
+        meses--;
+        const ultimoMes = new Date(agora.getFullYear(), agora.getMonth(), 0);
+        dias += ultimoMes.getDate();
+    }
+
+    if (meses < 0) {
+        anos--;
+        meses += 12;
+    }
+
+    document.getElementById("tempoJuntos").innerHTML =
+        `⏳ Juntos há: ${anos} anos, ${meses} meses, ${dias} dias, `
+        + `${horas}h ${minutos}m ${segundos}s ❤️`;
+}
+
+setInterval(calcularTempo, 1000);
+calcularTempo();
+
+// ===== BOTÕES =====
+function mostrarMensagem(){
+    document.getElementById("mensagemExtra").style.display = "block";
+}
+
+function mostrarVideo(){
+    document.getElementById("videoContainer").style.display = "block";
+}
+
+// ===== CORAÇÕES =====
+function criarCoracao() {
+    const coracao = document.createElement("div");
+    coracao.classList.add("coracao");
+    coracao.innerHTML = "❤️";
+
+    coracao.style.left = Math.random() * 100 + "vw";
+    coracao.style.animationDuration = (Math.random() * 3 + 3) + "s";
+
+    document.body.appendChild(coracao);
+
+    setTimeout(() => coracao.remove(), 6000);
+}
+
+setInterval(criarCoracao, 400);
+
+</script>
+
+</body>
+</html>

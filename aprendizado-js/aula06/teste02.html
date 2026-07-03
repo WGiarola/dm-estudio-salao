@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graciosa Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body{
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #fafafa;
+            color: #333;
+        }
+        header{
+            background: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(red, green, blue, alpha);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        header h1 {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 400;
+        }
+        nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 400;
+        }
+        .hero {
+            height: 70vh;
+            background: url('https://images.unsplash.com/photo-1520975918318-3fdb1bd114e0?auto=format&fit=crop&w=1300&q=80') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #110101;
+            padding: 20px;
+        }
+        .hero h2 {
+            font-size: 48px;
+            margin: 0;
+            max-width: 600px;
+            text-shadow: 0px 4px 20px rgba(red, green, blue, alpha);
+        }
+        .button{
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #e91e63;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .button:hover {background: #d81b60;}
+
+        .produtos {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .card{
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(red, green, blue, alpha);
+            transition: 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 22px rgba(red, green, blue, alpha);
+        }
+        .card img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+        }
+        .card-info h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+        }
+        .card-info p {
+            margin: 0;
+            color: #e91e63;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        footer {
+            background: #fff;
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+            box-shadow: 0 -2px 10px rgba(red, green, blue, alpha);
+        }
+
+    </style>
+</head>
+<body>
+  <header>
+    <h1>ModaFeminina • Graciosa Store</h1>
+    <nav>
+        <a href="#novidades">Novidades</a>
+        <a href="#colecao">Coleção</a>
+        <a href="contato">Contato</a>
+    </nav>
+  </header>   
+
+  <section class="hero">
+    <div>
+        <h2>Elegancia que destaca sua verdeira beleza</h2>
+        <a href="#coleção" class="button">Ver Coleção</a>
+    </div>
+  </section>
+
+  <section class="produtos" id="colecao">
+    <div class="card">
+        <img src="https://images.unsplash.com/photo-1520975918318-3fdb1bd114e0?auto=format&fit=crop&w=900&q=80" />
+        <div class="card-info">
+            <h3>Vestido Floral</h3>
+            <p>R$ 129,90</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80" />
+        <div class="card-info">
+            <h3> Macacão Elegante</h3>
+            <p>R$ 150,00</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="https://images.unsplash.com/photo-1517842187940-1042f9f2581e?auto=format&fit=crop&w=900&q=80" />
+        <div class="card-info">
+            <h3>Cropped Casual</h3>
+            <p>R$ 30,00</p>
+        </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 ModaFeminina • Todos os direitos reservados.</p>
+  </footer>
+</body>
+</html>
