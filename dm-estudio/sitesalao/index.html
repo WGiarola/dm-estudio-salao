@@ -19,7 +19,7 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght=200;300;400;500;600&display=swap');
         body { font-family: 'Montserrat', sans-serif; }
     </style>
 </head>
@@ -119,7 +119,6 @@
                 disponiveisNoDia.forEach(item => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
-                    // Formata exibição da hora tirando os segundos (:00)
                     const horaFormatada = item.hora.substring(0, 5);
                     btn.className = 'bg-stone-900 border border-stone-800 text-stone-300 text-xs py-3.5 rounded-xl hover:border-bronze-400 transition font-light';
                     btn.textContent = horaFormatada;
@@ -137,10 +136,10 @@
         });
 
         document.getElementById('servicoSelecionado').addEventListener('change', function() {
-            if (horaSelecionadaGlobal) actualizarResumo();
+            if (horaSelecionadaGlobal) atualizarResumo();
         });
 
-        function actualizarResumo() {
+        function atualizarResumo() {
             const servicoValue = document.getElementById('servicoSelecionado').value;
             if (!servicoValue || !horaSelecionadaGlobal) return;
             const [nomeServico, precoServico] = servicoValue.split('|');
@@ -165,14 +164,12 @@
             const [nomeServico, precoServico] = document.getElementById('servicoSelecionado').value.split('|');
 
             try {
-                // 1. Salva o agendamento no banco real
                 await fetch(`${SUPABASE_URL}/rest/v1/agendamentos`, {
                     method: 'POST',
                     headers,
                     body: JSON.stringify({ cliente: nomeCliente, whatsapp: telefoneCliente, servico: nomeServico, preco: precoServico, data: dataEscolhida, hora: horaSelecionadaGlobal })
                 });
 
-                // 2. Apaga das vagas livres para ninguém pegar o mesmo horário
                 await fetch(`${SUPABASE_URL}/rest/v1/horarios_livres?id=eq.${idHorarioGlobal}`, {
                     method: 'DELETE',
                     headers
