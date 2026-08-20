@@ -1,144 +1,889 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - D&M Estúdio</title>
-    <style>
-        /* Mantendo o padrão minimalista escuro que você usa no projeto */
-        body { font-family: sans-serif; background-color: #0d0d0d; color: #fff; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1, h2 { font-weight: 300; text-transform: uppercase; letter-spacing: 2px; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 15px; }
-        .tab-btn { background: #141414; color: #888; border: 1px solid #222; padding: 10px 20px; cursor: pointer; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
-        .tab-btn.active { background: #fff; color: #000; border-color: #fff; font-weight: bold; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        input, select { width: 100%; padding: 10px; margin: 10px 0; background: #141414; color: #fff; border: 1px solid #222; }
-        button { background: #fff; color: #000; border: none; padding: 10px; width: 100%; cursor: pointer; text-transform: uppercase; font-weight: bold; }
-        ul { list-style: none; padding: 0; }
-        li { padding: 10px 0; border-bottom: 1px solid #141414; display: flex; justify-content: space-between; align-items: center; }
-        .del-btn { background: transparent; color: #ff4d4d; border: none; cursor: pointer; width: auto; padding: 0; }
-        .wa-btn { color: #25d366; text-decoration: none; font-size: 13px; }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D&M Estúdio — Painel Administrativo</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#0b0b0c;--card:#121214;--card2:#18181b;--border:#29292d;--text:#f4f3ef;--muted:#96969b;--gold:#d2bd91;--green:#25d366;--red:#ff5a5f;--shadow:0 20px 60px #0008}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 100% 0,#d2bd9110,transparent 28%),var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}.login{min-height:100vh;display:grid;place-items:center;padding:20px}.login-card{width:min(410px,100%);background:var(--card);border:1px solid var(--border);border-radius:22px;padding:36px;box-shadow:var(--shadow)}.brand{text-align:center;margin-bottom:28px}.brand b{font-size:29px;letter-spacing:7px;font-weight:400;color:var(--gold)}.brand small{display:block;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:8px;font-size:9px}.field{display:grid;gap:7px;margin:0 0 15px}.field label{font-size:11px;color:var(--muted)}input,select{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px;outline:0}input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d2bd9112}.primary{width:100%;border:0;border-radius:10px;background:var(--text);color:#0b0b0c;padding:13px;font-weight:800}.primary:hover{background:var(--gold)}.error{min-height:18px;color:var(--red);font-size:12px;text-align:center}.app{min-height:100vh;display:grid;grid-template-columns:245px 1fr}.sidebar{position:sticky;top:0;height:100vh;background:#0d0d0ef5;border-right:1px solid var(--border);padding:22px 15px;display:flex;flex-direction:column;z-index:30}.side-brand{padding:7px 10px 23px;border-bottom:1px solid var(--border);margin-bottom:17px}.side-brand b{display:block;color:var(--gold);font-weight:400;letter-spacing:3px}.side-brand span{display:block;color:var(--muted);font-size:9px;letter-spacing:1.5px;margin-top:6px}.nav{display:grid;gap:5px}.nav button{background:transparent;border:1px solid transparent;color:var(--muted);text-align:left;padding:12px;border-radius:10px}.nav button:hover,.nav button.active{background:var(--card2);border-color:var(--border);color:var(--text)}.nav button.active{box-shadow:inset 3px 0 var(--gold)}.side-bottom{margin-top:auto;border-top:1px solid var(--border);padding-top:15px}.side-bottom label{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}.side-bottom select{margin:7px 0 9px}.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:9px;background:transparent;color:var(--muted)}.main{padding:28px;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px}.top h1{margin:0;font-size:24px;font-weight:500}.top p{margin:6px 0 0;color:var(--muted);font-size:12px}.mobile{display:none;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px}.section{display:none}.section.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:16px}.stat,.card{background:var(--card);border:1px solid var(--border);border-radius:15px}.stat{padding:18px;min-height:112px}.stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}.stat b{display:block;margin-top:17px;font-size:25px}.dashgrid,.formgrid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.formgrid{grid-template-columns:320px 1fr}.card{padding:19px}.card-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}.card-head h2{margin:0;font-size:14px}.card-head span{color:var(--muted);font-size:11px}.next{display:grid;grid-template-columns:85px 1fr auto;gap:14px;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px}.next-date{border-right:1px solid var(--border);padding-right:13px}.next-date b{font-size:19px}.next-date small{display:block;color:var(--muted);margin-top:4px}.next-info b{display:block}.next-info span{display:block;color:var(--muted);font-size:11px;margin-top:5px}.wa{display:inline-flex;color:var(--green);background:#25d36615;border:1px solid #25d36655;border-radius:8px;padding:8px 10px;text-decoration:none;font-size:10px;white-space:nowrap}.quick{display:grid}.quick div{display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:11px 0;font-size:12px}.quick div:last-child{border-bottom:0}.quick span{color:var(--muted)}.form-card{position:sticky;top:20px}.form-card h2{margin:0 0 17px;font-size:15px}.check{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:11px;margin:0 0 16px}.check input{width:auto;accent-color:var(--gold)}.toolbar{display:flex;gap:9px;margin-bottom:13px}.toolbar input:first-child{flex:1}.toolbar input:last-child{max-width:180px}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:11px}table{width:100%;border-collapse:collapse;min-width:650px}th,td{padding:13px;border-bottom:1px solid var(--border);font-size:11px;text-align:left}th{color:var(--muted);background:var(--card2);font-size:9px;text-transform:uppercase;letter-spacing:1px}tr:last-child td{border-bottom:0}.muted{color:var(--muted)}.actions{display:flex;gap:6px;justify-content:flex-end}.danger,.secondary{border-radius:8px;padding:7px 9px;font-size:10px}.danger{background:#ff5a5f15;border:1px solid #ff5a5f55;color:var(--red)}.secondary{background:var(--card2);border:1px solid var(--border);color:var(--text)}.empty{text-align:center;color:var(--muted);padding:25px}.toast{position:fixed;right:20px;bottom:20px;width:min(370px,calc(100vw - 40px));background:#19191b;border:1px solid var(--border);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow);opacity:0;transform:translateY(15px);pointer-events:none;transition:.25s;z-index:100}.toast.show{opacity:1;transform:none}.toast.success{border-color:#25d36666}.toast.error{border-color:#ff5a5f66}.toast.warning{border-color:#d2bd9166}.toast b{font-size:11px}.toast span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;padding:20px;z-index:90;backdrop-filter:blur(5px)}.modal-box{width:min(430px,100%);background:var(--card);border:1px solid var(--border);border-radius:17px;padding:23px;box-shadow:var(--shadow)}.modal-box h3{margin:0 0 8px;font-size:16px}.modal-box p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}.modal-actions button{padding:11px;border-radius:9px;font-weight:700}.modal-cancel{background:transparent;border:1px solid var(--border);color:var(--text)}.modal-confirm{background:var(--red);border:0;color:#fff}@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.dashgrid,.formgrid{grid-template-columns:1fr}.form-card{position:static}}@media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{position:fixed;left:-270px;width:255px;transition:.2s}.sidebar.open{left:0}.mobile{display:block}.main{padding:18px}.next{grid-template-columns:1fr}.next-date{border-right:0;border-bottom:1px solid var(--border);padding:0 0 10px}.toolbar{flex-direction:column}.toolbar input:last-child{max-width:none}}@media(max-width:470px){.stats{grid-template-columns:1fr}.login-card{padding:27px}}
+
+/* =========================================================
+   PRÓXIMO ATENDIMENTO — D&M ESTÚDIO
+   ========================================================= */
+
+.next-appointment {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    padding: 18px 20px;
+    box-sizing: border-box;
+}
+
+.next-appointment-date {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.next-appointment-date strong {
+    display: block;
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: 700;
+    white-space: nowrap;
+    color: #f4f1eb;
+}
+
+.next-appointment-date span {
+    display: block;
+    font-size: 14px;
+    line-height: 1.2;
+    color: #b9b3aa;
+    white-space: nowrap;
+}
+
+.next-appointment-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.next-appointment-info strong {
+    display: block;
+    font-size: 16px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: #f4f1eb;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.next-appointment-info span {
+    display: block;
+    font-size: 14px;
+    line-height: 1.3;
+    color: #c9c2b8;
+}
+
+.next-appointment-info small {
+    display: block;
+    font-size: 13px;
+    line-height: 1.3;
+    color: #8f8a83;
+}
+
+.next-appointment .whatsapp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid rgba(82, 190, 120, 0.45);
+    border-radius: 10px;
+    background: rgba(40, 120, 70, 0.12);
+    color: #72d39a;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.next-appointment .whatsapp:hover {
+    background: rgba(40, 120, 70, 0.22);
+    border-color: rgba(82, 190, 120, 0.7);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+   ========================================================= */
+
+.next-appointment + .empty,
+.empty {
+    padding: 28px 20px;
+    text-align: center;
+    color: #8f8a83;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    .next-appointment {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .next-appointment .whatsapp {
+        width: 100%;
+    }
+}
+
+</style>
 </head>
 <body>
+<section id="telaLogin" class="login">
+  <div class="login-card">
+    <div class="brand"><b>D&amp;M</b><small>Painel administrativo</small></div>
+    <form id="formLogin">
+      <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" autocomplete="username" placeholder="seu@email.com" required></div>
+      <div class="field"><label for="loginSenha">Senha</label><input id="loginSenha" type="password" autocomplete="current-password" placeholder="Sua senha" required></div>
+      <button id="btnLogin" class="primary" type="submit">Entrar no painel</button>
+      <a href="#" id="btnEsqueciSenha" class="forgot-password">Esqueci minha senha</a>
+      <p id="erroLogin" class="error"></p>
+    </form>
+  </div>
+</section>
 
-<div class="container">
-    <h1>Painel de Controle</h1>
-    
-    <!-- Abas para alternar entre as agendas de forma limpa -->
-    <div class="tabs">
-        <button class="tab-btn active" id="btn-Daiza" onclick="mudarAgenda('Daiza')">Agenda da Daiza</button>
-        <button class="tab-btn" id="btn-Marina" onclick="mudarAgenda('Marina')">Agenda da Marina</button>
+<div id="app" class="app hidden">
+  <aside id="sidebar" class="sidebar">
+    <div class="side-brand"><b>D&amp;M ESTÚDIO</b><span>GESTÃO ADMINISTRATIVA</span></div>
+    <nav class="nav">
+      <button class="active" data-section="dashboard">Dashboard</button>
+      <button data-section="agendamentos">Agendamentos</button>
+      <button data-section="servicos">Serviços e preços</button>
+      <button data-section="horarios">Horários livres</button>
+    </nav>
+    <div class="side-bottom">
+      <label>Agenda atual</label>
+      <select id="profissionalSelect"><option>Daiza</option><option>Marina</option></select>
+      <button id="btnLogout" class="logout" type="button">Sair</button>
     </div>
+  </aside>
 
-    <div class="grid">
-        <div>
-            <h2>Serviços e Preços</h2>
-            <input type="text" id="nomeServico" placeholder="Nome do Serviço">
-            <input type="number" id="precoServico" placeholder="Valor">
-            <button onclick="cadastrarServico()">Cadastrar</button>
-            <ul id="listaServicos"></ul>
-        </div>
+  <main class="main">
+    <header class="top">
+      <div style="display:flex;gap:10px;align-items:flex-start"><button id="btnMobile" class="mobile">☰</button><div><h1 id="titulo">Dashboard</h1><p id="subtitulo">Visão geral da agenda da <strong>Daiza</strong>.</p></div></div>
+      <span id="status" class="muted">Online</span>
+    </header>
 
-        <div>
-            <h2>Abrir Horários</h2>
-            <input type="date" id="dataAgenda">
-            <input type="time" id="horaAgenda">
-            <button onclick="liberarHorario()">Liberar Horário</button>
-            <ul id="listaHorarios"></ul>
-        </div>
-    </div>
+    <section id="section-dashboard" class="section active">
+      <div class="stats">
+        <div class="stat"><span>Próximo atendimento</span><b id="dashProximo">--:--</b></div>
+        <div class="stat"><span>Agendamentos</span><b id="dashAgendamentos">0</b></div>
+        <div class="stat"><span>Horários livres</span><b id="dashHorarios">0</b></div>
+        <div class="stat"><span>Serviços</span><b id="dashServicos">0</b></div>
+      </div>
+      <div class="dashgrid">
+        <article class="card"><div class="card-head"><h2>Próximo atendimento</h2><span id="dashProfissional">Daiza</span></div><div id="proximo"></div></article>
+        <article class="card"><div class="card-head"><h2>Resumo rápido</h2><span>Hoje</span></div><div id="resumo" class="quick"></div></article>
+      </div>
+    </section>
 
-    <div style="margin-top: 40px;">
-        <h2>Clientes Agendadas</h2>
-        <ul id="listaAgendamentos"></ul>
-    </div>
+    <section id="section-agendamentos" class="section">
+      <article class="card"><div class="card-head"><div><h2>Agendamentos</h2><span>Clientes da agenda selecionada</span></div></div>
+        <div class="toolbar"><input id="busca" type="search" placeholder="Buscar cliente, serviço ou telefone..."><input id="filtroData" type="date"></div>
+        <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Data</th><th>Hora</th><th>Serviço</th><th>Contato</th><th>Ações</th></tr></thead><tbody id="tabelaAgendamentos"></tbody></table></div>
+      </article>
+    </section>
+
+    <section id="section-servicos" class="section">
+      <div class="formgrid">
+        <article class="card form-card"><h2>Novo serviço</h2><form id="formServico">
+          <div class="field"><label>Nome do serviço</label><input id="nomeServico" required placeholder="Ex.: Escova"></div>
+          <div class="field"><label>Valor</label><input id="precoServico" type="number" min="0" step="0.01" placeholder="0,00"></div>
+          <label class="check"><input id="consultarValor" type="checkbox"> Consultar valor (sem preço fixo)</label>
+          <button id="btnServico" class="primary" type="submit">Cadastrar serviço</button>
+        </form></article>
+        <article class="card"><div class="card-head"><div><h2>Serviços cadastrados</h2><span id="contadorServicos">0 serviços</span></div></div><div class="table-wrap"><table><thead><tr><th>Serviço</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="tabelaServicos"></tbody></table></div></article>
+      </div>
+    </section>
+
+    <section id="section-horarios" class="section">
+      <div class="formgrid">
+        <article class="card form-card"><h2>Liberar horário</h2><form id="formHorario">
+          <div class="field"><label>Data</label><input id="dataAgenda" type="date" required></div>
+          <div class="field"><label>Horário</label><input id="horaAgenda" type="time" required></div>
+          <button id="btnHorario" class="primary" type="submit">Liberar horário</button>
+        </form></article>
+        <article class="card"><div class="card-head"><div><h2>Horários livres</h2><span id="contadorHorarios">0 horários</span></div></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Hora</th><th>Serviço</th><th>Ações</th></tr></thead><tbody id="tabelaHorarios"></tbody></table></div></article>
+      </div>
+    </section>
+  </main>
 </div>
 
+<div id="toast" class="toast"><b id="toastTitulo">Aviso</b><span id="toastMensagem"></span></div>
+<div id="modal" class="modal hidden"><div class="modal-box"><h3 id="modalTitulo">Confirmar</h3><p id="modalMensagem"></p><div class="modal-actions"><button id="modalCancelar" class="modal-cancel">Voltar</button><button id="modalConfirmar" class="modal-confirm">Confirmar</button></div></div></div>
+
 <script>
-    const SUPABASE_URL = "https://uglhbnbyloyeivpsrwvg.supabase.co"; 
-    const SUPABASE_KEY = "sb_publishable_jLcnt4fC899DcVrrB2SGZw_kWu3Br-A"; 
-    
-    // Mudamos o nome aqui para 'supabaseClient' para acabar com o conflito de declaração
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    let profissionalAtual = "Daiza";
+const SUPABASE_URL="https://uglhbnbylbyeivpsrwvg.supabase.co";
+const SUPABASE_KEY="sb_publishable_jLcnt4fC899DcVrrB2SGZw_kWu3Br-A";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let profissionalAtual="Daiza",secaoAtual="dashboard",cache={servicos:[],horarios:[],agendamentos:[]},toastTimer=null,confirmResolve=null;
+const $=id=>document.getElementById(id);
+const e={login:$('telaLogin'),app:$('app'),formLogin:$('formLogin'),email:$('loginEmail'),senha:$('loginSenha'),loginBtn:$('btnLogin'),loginErro:$('erroLogin'),sidebar:$('sidebar'),mobile:$('btnMobile'),logout:$('btnLogout'),prof:$('profissionalSelect'),titulo:$('titulo'),sub:$('subtitulo'),status:$('status'),dashProx:$('dashProximo'),dashAg:$('dashAgendamentos'),dashHor:$('dashHorarios'),dashServ:$('dashServicos'),dashProf:$('dashProfissional'),proximo:$('proximo'),resumo:$('resumo'),busca:$('busca'),filtro:$('filtroData'),tabAg:$('tabelaAgendamentos'),formServ:$('formServico'),nomeServ:$('nomeServico'),preco:$('precoServico'),consultar:$('consultarValor'),btnServ:$('btnServico'),tabServ:$('tabelaServicos'),contServ:$('contadorServicos'),formHor:$('formHorario'),data:$('dataAgenda'),hora:$('horaAgenda'),btnHor:$('btnHorario'),tabHor:$('tabelaHorarios'),contHor:$('contadorHorarios'),toast:$('toast'),toastT:$('toastTitulo'),toastM:$('toastMensagem'),modal:$('modal'),modalT:$('modalTitulo'),modalM:$('modalMensagem'),modalC:$('modalCancelar'),modalOK:$('modalConfirmar')};
+function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+function dataBR(v){if(!v)return'--/--/----';let p=String(v).split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:v}
+function hora(v){return v?String(v).slice(0,5):'--:--'}
+function moeda(v){let n=Number(v);return Number.isFinite(n)?n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'Consultar valor'}
+function dt(a){if(!a?.data||!a?.hora)return null;let d=new Date(`${a.data}T${String(a.hora).slice(0,8)}`);return Number.isNaN(d.getTime())?null:d}
+function ordenar(a){return [...a].sort((x,y)=>(dt(x)?.getTime()??Infinity)-(dt(y)?.getTime()??Infinity))}
+function tel(v){let n=String(v??'').replace(/\D/g,'');return n?(n.startsWith('55')?n:'55'+n):''}
+function wa(a){let n=tel(a.whatsapp);if(!n)return null;let m=`Olá ${a.cliente||''}, tudo bem? Estou entrando em contato sobre seu agendamento no D&M Estúdio.`;return `https://wa.me/${n}?text=${encodeURIComponent(m)}`}
+function toast(msg,type='success',title){clearTimeout(toastTimer);e.toastT.textContent=title||({success:'Tudo certo',error:'Atenção',warning:'Aviso'}[type]||'Aviso');e.toastM.textContent=msg;e.toast.className=`toast ${type}`;requestAnimationFrame(()=>e.toast.classList.add('show'));toastTimer=setTimeout(()=>e.toast.classList.remove('show'),3200)}
+function confirmar(msg,title='Confirmar ação',ok='Confirmar'){return new Promise(resolve=>{confirmResolve=resolve;e.modalT.textContent=title;e.modalM.textContent=msg;e.modalOK.textContent=ok;e.modal.classList.remove('hidden')})}
+function fechaConfirm(v){e.modal.classList.add('hidden');if(confirmResolve){let r=confirmResolve;confirmResolve=null;r(v)}}
+function secao(s){secaoAtual=s;document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.section===s));document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));$(`section-${s}`).classList.add('active');let n={dashboard:['Dashboard','Visão geral da agenda da'],agendamentos:['Agendamentos','Clientes da agenda da'],servicos:['Serviços e preços','Serviços cadastrados para'],horarios:['Horários livres','Horários disponíveis para']}[s];e.titulo.textContent=n[0];e.sub.innerHTML=`${n[1]} <strong>${esc(profissionalAtual)}</strong>.`;e.sidebar.classList.remove('open')}
+function loginTela(){e.login.classList.remove('hidden');e.app.classList.add('hidden');e.senha.value='';setTimeout(()=>e.email.focus(),0)}
+function painel(){e.login.classList.add('hidden');e.app.classList.remove('hidden')}
+async function fazerLogin(ev){ev.preventDefault();let email=e.email.value.trim(),senha=e.senha.value;if(!email||!senha){e.loginErro.textContent='Preencha e-mail e senha.';return}e.loginBtn.disabled=true;e.loginBtn.textContent='Entrando...';e.loginErro.textContent='';try{let{error}=await supabaseClient.auth.signInWithPassword({email,password:senha});if(error){let m=String(error.message||'');e.loginErro.textContent=m.toLowerCase().includes('invalid login credentials')?'E-mail ou senha incorretos.':m;return}painel();toast('Login realizado com sucesso');await atualizar()}catch(err){console.error(err);e.loginErro.textContent='Não foi possível entrar no painel.'}finally{e.loginBtn.disabled=false;e.loginBtn.textContent='Entrar no painel'}}
+document.getElementById('btnEsqueciSenha').addEventListener('click', async (ev) => {
+  ev.preventDefault();
 
-    function mudarAgenda(nome) {
-        profissionalAtual = nome;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`btn-${nome}`).classList.add('active');
-        atualizarPainel();
+  const email = e.email.value.trim();
+
+  if (!email) {
+    e.loginErro.textContent = 'Digite seu e-mail primeiro.';
+    e.email.focus();
+    return;
+  }
+
+  e.loginErro.textContent = 'Enviando link de recuperação...';
+
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://sitesalao-phi.vercel.app/reset-password.html'
+  });
+
+  if (error) {
+    console.error(error);
+    e.loginErro.textContent = 'Não foi possível enviar o e-mail de recuperação.';
+    return;
+  }
+
+  e.loginErro.textContent = 'Link de recuperação enviado! Verifique seu e-mail.';
+});
+async function logout(){if(!await confirmar('Você realmente deseja sair do painel administrativo?','Sair do painel','Sair'))return;let{error}=await supabaseClient.auth.signOut();if(error){toast(error.message,'error');return}cache={servicos:[],horarios:[],agendamentos:[]};loginTela()}
+async function sessao(){let{data,error}=await supabaseClient.auth.getSession();if(error||!data?.session)loginTela();else{painel();await atualizar()}}
+supabaseClient.auth.onAuthStateChange((_event,session)=>session?painel():loginTela());
+
+let servicoEditandoId = null;
+
+async function listarServicos() {
+    const { data, error } = await supabaseClient
+        .from('servicos')
+        .select('*')
+        .eq('profissional', profissionalAtual);
+
+    if (error) {
+        console.error(error);
+        toast('Não foi possível carregar os serviços.', 'error');
+        return;
     }
 
-    async function atualizarPainel() {
-        await Promise.all([listarServicos(), listarHorarios(), listarAgendamentos()]);
+    cache.servicos = data || [];
+
+    e.dashServ.textContent = cache.servicos.length;
+
+    e.contServ.textContent =
+        `${cache.servicos.length} serviço${cache.servicos.length === 1 ? '' : 's'}`;
+
+    e.tabServ.innerHTML = '';
+
+    if (!cache.servicos.length) {
+        e.tabServ.innerHTML = `
+            <tr>
+                <td colspan="3" class="empty">
+                    Nenhum serviço cadastrado.
+                </td>
+            </tr>
+        `;
+        return;
     }
 
-    async function cadastrarServico() {
-        const nome = document.getElementById('nomeServico').value;
-        const preco = parseFloat(document.getElementById('precoServico').value);
-        if (!nome || !preco) return;
+    cache.servicos.forEach(s => {
+        const tr = document.createElement('tr');
 
-        await supabaseClient.from('servicos').insert([{ nome, preco, profissional: profissionalAtual }]);
-        document.getElementById('nomeServico').value = '';
-        document.getElementById('precoServico').value = '';
-        atualizarPainel();
+        tr.innerHTML = `
+            <td>
+                <strong>${esc(s.nome)}</strong>
+            </td>
+
+            <td class="muted">
+                ${esc(
+                    s.consultar_valor
+                        ? 'Consultar valor'
+                        : moeda(s.preco)
+                )}
+            </td>
+
+            <td>
+                <div class="actions">
+
+                    <button
+                        type="button"
+                        class="secondary"
+                        data-act="editar-servico"
+                        data-id="${esc(s.id)}">
+                        Editar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="danger"
+                        data-act="servico"
+                        data-id="${esc(s.id)}">
+                        Excluir
+                    </button>
+
+                </div>
+            </td>
+        `;
+
+        e.tabServ.appendChild(tr);
+    });
+}
+
+
+async function cadastrarServico(ev) {
+    ev.preventDefault();
+
+    const nome = e.nomeServ.value.trim();
+    const consulta = e.consultar.checked;
+    const preco = consulta
+        ? null
+        : Number.parseFloat(e.preco.value);
+
+    if (!nome) {
+        toast('Digite o nome do serviço.', 'warning');
+        return;
     }
 
-    async function listarServicos() {
-        const { data } = await supabaseClient.from('servicos').select('*').eq('profissional', profissionalAtual);
-        const lista = document.getElementById('listaServicos');
-        lista.innerHTML = '';
-        if (data) {
-            data.forEach(s => {
-                lista.innerHTML += `<li>${s.nome} - R$ ${s.preco.toFixed(2)} <button class="del-btn" onclick="deletarItem('servicos', '${s.id}')">[X]</button></li>`;
-            });
+    if (
+        !consulta &&
+        (!Number.isFinite(preco) || preco < 0)
+    ) {
+        toast(
+            'Informe um valor válido ou marque Consultar valor.',
+            'warning'
+        );
+        return;
+    }
+
+    e.btnServ.disabled = true;
+
+    try {
+
+        // ==========================================
+        // EDITANDO SERVIÇO
+        // ==========================================
+
+        if (servicoEditandoId !== null) {
+
+            e.btnServ.textContent = 'Salvando...';
+
+            const { data, error } = await supabaseClient
+                .from('servicos')
+                .update({
+                    nome,
+                    preco,
+                    consultar_valor: consulta
+                })
+                .eq('id', servicoEditandoId)
+                .select();
+            
+            console.log('RESULTADO UPDATE:', {
+                    data,
+                    error,
+                    id: servicoEditandoId,
+                    nome
+            });   
+
+            if (error) {
+                throw error;
+            }
+
+            toast(`Serviço "${nome}" atualizado.`);
+
+            cancelarEdicaoServico();
+
+            await atualizar();
+
+            return;
+        }
+
+
+        // ==========================================
+        // NOVO SERVIÇO
+        // ==========================================
+
+        e.btnServ.textContent = 'Cadastrando...';
+
+        const { error } = await supabaseClient
+            .from('servicos')
+            .insert([{
+                nome,
+                preco,
+                consultar_valor: consulta,
+                profissional: profissionalAtual
+            }]);
+
+        if (error) {
+            throw error;
+        }
+
+        e.formServ.reset();
+
+        e.preco.disabled = false;
+
+        toast(`Serviço "${nome}" cadastrado.`);
+
+        await atualizar();
+
+    } catch (err) {
+
+        console.error(err);
+
+        toast(
+            'Não foi possível salvar o serviço: ' +
+            (err.message || ''),
+            'error'
+        );
+
+    } finally {
+
+        e.btnServ.disabled = false;
+
+        if (servicoEditandoId !== null) {
+            e.btnServ.textContent = 'Salvar alterações';
+        } else {
+            e.btnServ.textContent = 'Cadastrar serviço';
         }
     }
+}
 
-    async function liberarHorario() {
-        const data = document.getElementById('dataAgenda').value;
-        const hora = document.getElementById('horaAgenda').value;
-        if (!data || !hora) return;
+function editarServico(id) {
 
-        await supabaseClient.from('horarios_livres').insert([{ data, hora, profissional: profissionalAtual, disponivel: true }]);
-        atualizarPainel();
+    const servico = cache.servicos.find(
+        s => String(s.id) === String(id)
+    );
+
+    if (!servico) {
+        toast('Serviço não encontrado.', 'error');
+        return;
     }
 
-    async function listarHorarios() {
-        const { data } = await supabaseClient.from('horarios_livres').select('*').eq('profissional', profissionalAtual).eq('disponivel', true);
-        const lista = document.getElementById('listaHorarios');
-        lista.innerHTML = '';
-        if (data) {
-            data.forEach(h => {
-                const dataFormatada = h.data.split('-').reverse().join('/');
-                lista.innerHTML += `<li>${dataFormatada} às ${h.hora.substring(0,5)} <button class="del-btn" onclick="deletarItem('horarios_livres', '${h.id}')">[X]</button></li>`;
-            });
+    servicoEditandoId = servico.id;
+
+    e.nomeServ.value = servico.nome || '';
+
+    e.consultar.checked = Boolean(servico.consultar_valor);
+
+    e.preco.disabled = Boolean(servico.consultar_valor);
+
+    e.preco.value =
+        servico.consultar_valor || servico.preco == null
+            ? ''
+            : servico.preco;
+
+    e.btnServ.textContent = 'Salvar alterações';
+
+    // muda o título do formulário, caso exista esse elemento
+    const tituloForm = e.formServ.querySelector('h2');
+
+    if (tituloForm) {
+        tituloForm.textContent = 'Editar serviço';
+    }
+
+    e.nomeServ.focus();
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+
+function cancelarEdicaoServico() {
+
+    servicoEditandoId = null;
+
+    e.formServ.reset();
+
+    e.preco.disabled = false;
+
+    e.btnServ.textContent = 'Cadastrar serviço';
+
+    const tituloForm = e.formServ.querySelector('h2');
+
+    if (tituloForm) {
+        tituloForm.textContent = 'Novo serviço';
+    }
+}
+
+async function excluirServico(id){let s=cache.servicos.find(x=>String(x.id)===String(id));if(!s)return;if(!await confirmar(`O serviço "${s.nome}" será excluído da agenda da ${profissionalAtual}.`,'Excluir serviço','Excluir'))return;let{error}=await supabaseClient.from('servicos').delete().eq('id',id);if(error){console.error(error);toast('Não foi possível excluir o serviço.','error');return}toast('Serviço excluído com sucesso.');await atualizar()}
+async function listarHorarios() {
+    console.log("PROFISSIONAL ATUAL:", profissionalAtual);
+
+    const { data, error } = await supabaseClient
+        .from('horarios_livres')
+        .select('*')
+        .eq('profissional', profissionalAtual);
+
+    console.log("HORÁRIOS VINDOS DO SUPABASE:", data);
+    console.log("ERRO:", error);
+
+    if (error) {
+        console.error("Erro ao carregar horários:", error);
+        toast("Não foi possível carregar os horários.", "error");
+        return;
+    }
+
+    cache.horarios = (data || []).sort((a, b) => {
+        const dataA = new Date(`${a.data}T${a.hora}`);
+        const dataB = new Date(`${b.data}T${b.hora}`);
+
+        return dataA - dataB;
+    });
+
+    // Atualiza os contadores
+    e.dashHor.textContent = cache.horarios.length;
+
+    e.contHor.textContent =
+        `${cache.horarios.length} horário${cache.horarios.length === 1 ? '' : 's'}`;
+
+    // Limpa a tabela
+    e.tabHor.innerHTML = '';
+
+    // Nenhum horário
+    if (!cache.horarios.length) {
+        e.tabHor.innerHTML = `
+            <tr>
+                <td colspan="4" class="empty">
+                    Nenhum horário livre cadastrado.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    // Monta os horários
+    cache.horarios.forEach(h => {
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+            <td>
+                ${esc(dataBR(h.data))}
+            </td>
+
+            <td>
+                <strong>${esc(hora(h.hora))}</strong>
+            </td>
+
+            <td class="muted">
+                ${esc(h.servico || 'Disponível')}
+            </td>
+
+            <td>
+                <div class="actions">
+                    <button
+                        class="danger"
+                        type="button"
+                        data-act="horario"
+                        data-id="${esc(h.id)}">
+                        Excluir
+                    </button>
+                </div>
+            </td>
+        `;
+
+        e.tabHor.appendChild(tr);
+    });
+}
+
+
+async function liberarHorario(ev) {
+    ev.preventDefault();
+
+    const data = e.data.value;
+    const horaSelecionada = e.hora.value;
+
+    // Validação
+    if (!data || !horaSelecionada) {
+        toast(
+            "Selecione a data e o horário.",
+            "warning"
+        );
+        return;
+    }
+
+    // Evita duplo clique
+    e.btnHor.disabled = true;
+    e.btnHor.textContent = "Liberando...";
+
+    try {
+        // Verifica se já existe esse horário
+        const { data: existente, error: erroBusca } = await supabaseClient
+            .from('horarios_livres')
+            .select('id')
+            .eq('data', data)
+            .eq('hora', horaSelecionada)
+            .eq('profissional', profissionalAtual)
+            .maybeSingle();
+
+        if (erroBusca) {
+            throw erroBusca;
         }
-    }
 
-    async function listarAgendamentos() {
-        const { data } = await supabaseClient.from('agendamentos').select('*').eq('profissional', profissionalAtual);
-        const lista = document.getElementById('listaAgendamentos');
-        lista.innerHTML = '';
-        if (data) {
-            data.forEach(a => {
-                const dataFormatada = a.data.split('-').reverse().join('/');
-                const linkWhats = `https://wa.me/55${a.telefone.replace(/\D/g, "")}?text=Olá%20${encodeURIComponent(a.cliente)}`;
-                lista.innerHTML += `<li>
-                    <div><strong>${a.cliente}</strong> (${dataFormatada} às ${a.hora.substring(0,5)})<br><small>${a.servico}</small></div>
-                    <a href="${linkWhats}" target="_blank" class="wa-btn">WhatsApp</a>
-                </li>`;
-            });
+        if (existente) {
+            toast(
+                "Esse horário já está liberado.",
+                "warning"
+            );
+            return;
         }
+
+        // Cadastra o horário
+        const { error } = await supabaseClient
+            .from('horarios_livres')
+            .insert([
+                {
+                    data: data,
+                    hora: horaSelecionada,
+                    profissional: profissionalAtual
+                }
+            ]);
+
+        if (error) {
+            throw error;
+        }
+
+        // Limpa o formulário
+        e.formHor.reset();
+
+        // Mensagem de sucesso
+        toast(
+            `Horário ${dataBR(data)} às ${hora(horaSelecionada)} liberado.`
+        );
+
+        // Atualiza todo o painel
+        await atualizar();
+
+    } catch (err) {
+        console.error("Erro ao liberar horário:", err);
+
+        toast(
+            err.message ||
+            "Não foi possível liberar esse horário.",
+            "error"
+        );
+
+    } finally {
+        e.btnHor.disabled = false;
+        e.btnHor.textContent = "Liberar horário";
+    }
+}
+async function excluirHorario(id){let h=cache.horarios.find(x=>String(x.id)===String(id));if(!h)return;if(!await confirmar(`Excluir o horário de ${dataBR(h.data)} às ${hora(h.hora)}?`,'Excluir horário','Excluir'))return;let{error}=await supabaseClient.from('horarios_livres').delete().eq('id',id);if(error){console.error(error);toast('Não foi possível excluir o horário.','error');return}toast('Horário excluído com sucesso.');await atualizar()}
+async function listarAgendamentos(){let{data,error}=await supabaseClient.from('agendamentos').select('*').eq('profissional',profissionalAtual);if(error){console.error(error);toast('Não foi possível carregar os agendamentos.','error');return}cache.agendamentos=ordenar(data||[]);e.dashAg.textContent=cache.agendamentos.length;renderAgendamentos();renderDashboard()}
+function renderAgendamentos(){let q=e.busca.value.trim().toLowerCase(),f=e.filtro.value;let lista=cache.agendamentos.filter(a=>{let t=`${a.cliente||''} ${a.servico||''} ${a.whatsapp||''}`.toLowerCase();return(!q||t.includes(q))&&(!f||a.data===f)});e.tabAg.innerHTML='';if(!lista.length){e.tabAg.innerHTML='<tr><td colspan="6" class="empty">Nenhum agendamento encontrado.</td></tr>';return}lista.forEach(a=>{let tr=document.createElement('tr'),link=wa(a);tr.innerHTML=`<td><strong>${esc(a.cliente||'Cliente')}</strong></td><td>${esc(dataBR(a.data))}</td><td><strong>${esc(hora(a.hora))}</strong></td><td>${esc(a.servico||'—')}</td><td class="muted">${esc(a.whatsapp||'—')}</td><td><div class="actions">${link?`<a class="wa" href="${esc(link)}" target="_blank" rel="noopener noreferrer">WhatsApp</a>`:''}<button class="danger" data-act="agendamento" data-id="${esc(a.id)}">Cancelar</button></div></td>`;e.tabAg.appendChild(tr)})}
+async function cancelarAgendamento(id){let a=cache.agendamentos.find(x=>String(x.id)===String(id));if(!a)return;if(!await confirmar(`O agendamento de ${a.cliente||'cliente'} em ${dataBR(a.data)} às ${hora(a.hora)} será cancelado e o horário será devolvido.`,'Cancelar agendamento','Sim, cancelar'))return;e.status.textContent='Cancelando...';let devolvido=false;try{let{error}=await supabaseClient.from('horarios_livres').insert([{data:a.data,hora:a.hora,profissional:a.profissional,servico:a.servico}]);if(error)throw new Error('Não foi possível devolver o horário: '+error.message);devolvido=true;let{error:del}=await supabaseClient.from('agendamentos').delete().eq('id',a.id);if(del){if(devolvido)await supabaseClient.from('horarios_livres').delete().eq('data',a.data).eq('hora',a.hora).eq('profissional',a.profissional);throw new Error('Não foi possível cancelar o agendamento: '+del.message)}toast('Agendamento cancelado e horário devolvido.');await atualizar()}catch(err){console.error(err);toast(err.message||'Não foi possível cancelar o agendamento.','error')}finally{e.status.textContent='Online'}}
+
+function renderDashboard() {
+    try {
+        const agendamentos = Array.isArray(cache.agendamentos)
+            ? cache.agendamentos
+            : [];
+
+        const horarios = Array.isArray(cache.horarios)
+            ? cache.horarios
+            : [];
+
+        const servicos = Array.isArray(cache.servicos)
+            ? cache.servicos
+            : [];
+
+        // =====================================================
+        // CONTADORES DO DASHBOARD
+        // =====================================================
+
+        e.dashAg.textContent = agendamentos.length;
+        e.dashHor.textContent = horarios.length;
+        e.dashServ.textContent = servicos.length;
+
+        if (e.dashProf) {
+            e.dashProf.textContent = profissionalAtual || '—';
+        }
+
+        // =====================================================
+        // ENCONTRAR PRÓXIMO ATENDIMENTO
+        // =====================================================
+
+        const agora = new Date();
+
+        const proximos = agendamentos
+            .filter(a => a.data && a.hora)
+            .map(a => {
+                const dataHora = new Date(
+                    `${a.data}T${String(a.hora).slice(0, 8)}`
+                );
+
+                return {
+                    ...a,
+                    _dataHora: dataHora
+                };
+            })
+            .filter(a =>
+                !Number.isNaN(a._dataHora.getTime()) &&
+                a._dataHora >= agora
+            )
+            .sort((a, b) => a._dataHora - b._dataHora);
+
+        const proximo = proximos[0] || null;
+
+        // =====================================================
+        // CARD "PRÓXIMO ATENDIMENTO"
+        // =====================================================
+
+        if (!proximo) {
+            e.dashProx.textContent = '--:--';
+
+            e.proximo.innerHTML = `
+                <div class="empty">
+                    Nenhum próximo atendimento encontrado.
+                </div>
+            `;
+        } else {
+            const cliente = esc(proximo.cliente || 'Cliente');
+            const servico = esc(proximo.servico || 'Serviço');
+            const data = esc(dataBR(proximo.data));
+            const horario = esc(hora(proximo.hora));
+
+            const telefone =
+                proximo.telefone ||
+                proximo.whatsapp ||
+                '';
+
+            const telefoneLimpo =
+                String(telefone).replace(/\D/g, '');
+
+            e.dashProx.textContent = horario;
+
+            e.proximo.innerHTML = `
+                <div class="next-appointment">
+
+                    <div class="next-appointment-date">
+                        <strong>${data}</strong>
+                        <span>${horario}</span>
+                    </div>
+
+                    <div class="next-appointment-info">
+                        <strong>${cliente}</strong>
+                        <span>${servico}</span>
+
+                        ${
+                            telefone
+                                ? `<small>${esc(telefone)}</small>`
+                                : ''
+                        }
+                    </div>
+
+                    ${
+                        telefoneLimpo
+                            ? `
+                                <a
+                                    class="whatsapp"
+                                    href="https://wa.me/${telefoneLimpo}"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    WhatsApp
+                                </a>
+                            `
+                            : ''
+                    }
+
+                </div>
+            `;
+        }
+
+        // =====================================================
+        // RESUMO DO DIA
+        // =====================================================
+
+        const hojeDate = new Date();
+
+        const ano = hojeDate.getFullYear();
+        const mes = String(hojeDate.getMonth() + 1).padStart(2, '0');
+        const dia = String(hojeDate.getDate()).padStart(2, '0');
+
+        const hoje = `${ano}-${mes}-${dia}`;
+
+        const atendimentosHoje = agendamentos.filter(
+            a => String(a.data) === hoje
+        ).length;
+
+        const horariosHoje = horarios.filter(
+            h => String(h.data) === hoje
+        ).length;
+
+        e.resumo.innerHTML = `
+            <div class="summary-row">
+                <span>Profissional</span>
+                <strong>
+                    ${esc(profissionalAtual || '—')}
+                </strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Atendimentos hoje</span>
+                <strong>${atendimentosHoje}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Horários livres hoje</span>
+                <strong>${horariosHoje}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Serviços cadastrados</span>
+                <strong>${servicos.length}</strong>
+            </div>
+        `;
+
+    } catch (erro) {
+        console.error(
+            'Erro ao renderizar o dashboard:',
+            erro
+        );
+    }
+}
+
+
+
+
+async function atualizar(){e.status.textContent='Atualizando...';try{await Promise.all([listarServicos(),listarHorarios(),listarAgendamentos()]);renderDashboard();e.status.textContent='Online'}catch(err){console.error(err);e.status.textContent='Erro';toast('Erro ao atualizar o painel.','error')}}
+
+e.formLogin.addEventListener('submit',fazerLogin);e.logout.addEventListener('click',logout);e.prof.addEventListener('change',()=>{profissionalAtual=e.prof.value;secao(secaoAtual);atualizar()});e.mobile.addEventListener('click',()=>e.sidebar.classList.toggle('open'));document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>secao(b.dataset.section)));e.formServ.addEventListener('submit',cadastrarServico);e.formHor.addEventListener('submit',liberarHorario);e.consultar.addEventListener('change',()=>{e.preco.disabled=e.consultar.checked;if(e.consultar.checked)e.preco.value=''});e.busca.addEventListener('input',renderAgendamentos);e.filtro.addEventListener('change',renderAgendamentos);
+
+e.tabServ.addEventListener('click',ev=>{
+    let editar=ev.target.closest('[data-act="editar-servico"]');
+    if(editar){
+        editarServico(editar.dataset.id);
+        return;
     }
 
-    async function deletarItem(tabela, id) {
-        await supabaseClient.from(tabela).delete().eq('id', id);
-        atualizarPainel();
+    let excluir=ev.target.closest('[data-act="servico"]');
+    if(excluir){
+        excluirServico(excluir.dataset.id);
     }
+});
 
-    atualizarPainel();
+
+e.tabHor.addEventListener('click',ev=>{let b=ev.target.closest('[data-act="horario"]');if(b)excluirHorario(b.dataset.id)});e.tabAg.addEventListener('click',ev=>{let b=ev.target.closest('[data-act="agendamento"]');if(b)cancelarAgendamento(b.dataset.id)});e.modalC.addEventListener('click',()=>fechaConfirm(false));e.modalOK.addEventListener('click',()=>fechaConfirm(true));e.modal.addEventListener('click',ev=>{if(ev.target===e.modal)fechaConfirm(false)});document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&!e.modal.classList.contains('hidden'))fechaConfirm(false)});secao('dashboard');sessao();
 </script>
+</body>
+</html>
